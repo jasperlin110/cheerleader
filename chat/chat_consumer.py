@@ -18,8 +18,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
     async def receive_json(self, content, **kwargs):
-        message = content["data"]
+        if content["type"] != self.MessageType.CHAT_MESSAGE:
+            return
 
+        message = content["data"]
         bot_message = self.bot.predict(
             user_message=message
         )
