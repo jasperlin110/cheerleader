@@ -30,6 +30,6 @@ def generate_bot() -> LLMChain:
     return LLMChain(
         llm=llm,
         prompt=prompt,
-        verbose=True,
+        verbose=True,  # TODO: Remove before deploying
         memory=memory
     )
