@@ -25,7 +25,7 @@ def generate_bot() -> LLMChain:
         llm=llm,
         input_key="user_message",
         ai_prefix="Cheerleader",
-        human_prefix="Hiring manager"
+        human_prefix="Hiring Manager"
     )
     return LLMChain(
         llm=llm,
