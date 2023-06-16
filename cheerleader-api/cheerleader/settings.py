@@ -122,3 +122,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PROMPT_FILE_PATH = BASE_DIR / os.getenv('PROMPT_FILE_PATH')
+MAX_USER_MESSAGE_COUNT = int(os.getenv('MAX_USER_MESSAGE_COUNT', 3))
+
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
+PHONE_NUMBER = os.getenv('PHONE_NUMBER')
