@@ -51,5 +51,5 @@ Outside of work, Jasper enjoys riding motorcycles, spending time outdoors, visit
 ### Conversation ###
 {history}
 
-Hiring manager: {user_message}
+Hiring Manager: {user_message}
 Cheerleader:
