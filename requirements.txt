@@ -1,7 +1,9 @@
-channels[daphne]==4.0.0
-channels-redis==4.1.0
+# channels[daphne]==4.0.0
+# channels-redis==4.1.0
+django-cors-headers==4.1.0
 Django==4.2.2
-langchain==0.0.201
+jsonschema==4.17.3
+langchain==0.0.211
 openai==0.27.8
 requests==2.31.0
 tiktoken==0.4.0
