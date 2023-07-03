@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-ooxzabinxlthc$8xjwu
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',
+    'https://cheerleader-api.onrender.com',
 ]
 
 # Application definition
@@ -53,12 +53,10 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
+    'https://cheerleader-ui.onrender.com/',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
+    'https://cheerleader-ui.onrender.com/',
 ]
 
 ROOT_URLCONF = 'cheerleader.urls'
