@@ -53,10 +53,10 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://cheerleader-ui.onrender.com/',
+    'https://cheerleader-ui.onrender.com',
 ]
 CSRF_TRUSTED_ORIGINS = [
-    'https://cheerleader-ui.onrender.com/',
+    'https://cheerleader-ui.onrender.com',
 ]
 
 ROOT_URLCONF = 'cheerleader.urls'
