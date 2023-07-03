@@ -2,6 +2,7 @@
 # channels-redis==4.1.0
 django-cors-headers==4.1.0
 Django==4.2.2
+gunicorn==20.1.0
 jsonschema==4.17.3
 langchain==0.0.211
 openai==0.27.8
