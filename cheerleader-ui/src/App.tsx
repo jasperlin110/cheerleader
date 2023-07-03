@@ -1,6 +1,8 @@
-import './App.css'
+import "./App.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
+
+const BASE_URL = "https://cheerleader-api.onrender.com";
 
 interface ChatMessage {
     role: string,
@@ -19,7 +21,7 @@ function App() {
     });
 
     useEffect(() => {
-        axios.get("http://localhost:8000/csrf/").then(_ => {});
+        axios.get(`${BASE_URL}/csrf/`).then(_ => {});
     }, []);
 
     const handleKeyDown = useCallback( async (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -33,7 +35,7 @@ function App() {
             userMessageRef.current.value = "";
 
             const botMessageObject: ChatMessage = await axios.post(
-                "http://localhost:8000/chat/bot-response/",
+                `${BASE_URL}/chat/bot-response/`,
                 userMessageObject
             ).then(response => {
                 const botMessageObject = response.data;
