@@ -58,6 +58,7 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://cheerleader-ui.onrender.com',
 ]
+CSRF_COOKIE_SAMESITE = 'None'
 
 ROOT_URLCONF = 'cheerleader.urls'
 
