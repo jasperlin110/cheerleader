@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-ooxzabinxlthc$8xjwu5#3b*dsfapg&8(g5e!i)xl&u=e-n&4)')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('ENV', 'dev') == 'dev'
 
 ALLOWED_HOSTS = [
     'cheerleader-api.onrender.com',
@@ -59,6 +59,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://cheerleader-ui.onrender.com',
 ]
 CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = not DEBUG
 
 ROOT_URLCONF = 'cheerleader.urls'
 
