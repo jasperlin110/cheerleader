@@ -1,6 +1,5 @@
-from django.http import JsonResponse, HttpRequest, HttpResponse
-from django.middleware.csrf import get_token
+from django.http import HttpRequest, HttpResponse
 
 
-def csrf(request: HttpRequest) -> HttpResponse:
-    return JsonResponse({'csrfToken': get_token(request)})
+def csrf(_: HttpRequest) -> HttpResponse:
+    return HttpResponse('CSRF token set.')
