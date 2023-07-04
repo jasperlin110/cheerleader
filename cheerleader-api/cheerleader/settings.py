@@ -27,9 +27,13 @@ DEBUG = os.getenv('ENV', 'dev') == 'dev'
 ALLOWED_HOSTS = [
     'cheerleader-api.onrender.com',
 ]
+if DEBUG:
+    ALLOWED_HOSTS.extend([
+        'localhost',
+        '127.0.0.1',
+    ])
 
 # Application definition
-
 INSTALLED_APPS = [
     'chat',
     'corsheaders',
@@ -45,7 +49,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -55,11 +58,11 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://cheerleader-ui.onrender.com',
 ]
-CSRF_TRUSTED_ORIGINS = [
-    'https://cheerleader-ui.onrender.com',
-]
-CSRF_COOKIE_SAMESITE = 'None'
-CSRF_COOKIE_SECURE = not DEBUG
+if DEBUG:
+    CORS_ALLOWED_ORIGINS.extend([
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ])
 
 ROOT_URLCONF = 'cheerleader.urls'
 
