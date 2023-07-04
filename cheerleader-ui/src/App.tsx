@@ -2,6 +2,10 @@ import "./App.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
 
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.withCredentials = true;
+
 const BASE_URL = "https://cheerleader-api.onrender.com";
 
 interface ChatMessage {
