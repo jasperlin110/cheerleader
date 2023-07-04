@@ -4,6 +4,7 @@ from json import JSONDecodeError
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.views.decorators.http import require_POST
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
 
@@ -32,6 +33,7 @@ REQUEST_BODY_SCHEMA = {
 }
 
 
+@require_POST
 def bot_response(request: HttpRequest) -> HttpResponse:
     try:
         request_body = json.loads(request.body)
