@@ -2,11 +2,8 @@ import "./App.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
 
-axios.defaults.xsrfCookieName = "csrftoken";
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.withCredentials = true;
-
-const BASE_URL = "https://cheerleader-api.onrender.com";
+// const BASE_URL = "https://cheerleader-api.onrender.com";
+const BASE_URL = "http://localhost:8000";
 
 interface ChatMessage {
     role: string,
@@ -17,6 +14,8 @@ interface ChatMessage {
 function App() {
     const [loginTime] = useState<string>(new Date().toTimeString());
 
+    const [isThinking, setIsThinking] = useState<boolean>(false);
+
     const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
     const userMessageRef = useRef<HTMLInputElement>(null);
 
@@ -25,8 +24,13 @@ function App() {
     });
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/csrf/`).then(_ => {});
-    }, []);
+        if (messageHistory.length === 0) {
+            return;
+        }
+
+        const lastMessage = messageHistory[messageHistory.length - 1];
+        setIsThinking(lastMessage.role === "user");
+    }, [messageHistory]);
 
     const handleKeyDown = useCallback( async (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter" && userMessageRef.current != null) {
@@ -98,6 +102,14 @@ function App() {
                         </div>
                     ))}
                 </div>
+                {
+                    isThinking ?
+                        <div className="thinking-line">
+                            Cheerleader is thinking...
+                        </div>
+                        :
+                        null
+                }
                 <div className="input-line">
                     <label className="message-prefix" htmlFor="user-input">You:</label>
                     <input

@@ -53,6 +53,10 @@
   padding-top: 20px;
 }
 
+.thinking-line {
+  padding-top: 10px;
+}
+
 .message-prefix {
   margin-top: 0;
   margin-bottom: 5px;
@@ -61,11 +65,10 @@
 }
 
 .user-input {
-  flex-grow: 8;
+  width: 100%;
   background: #000;
   border: transparent;
   padding: 0;
-  /*margin-left: 0.5em;*/
 
   color: #FFF;
   text-shadow: 0 0 0 #FFF;
