@@ -122,7 +122,6 @@ USE_TZ = True
 
 # Sessions
 SESSION_COOKIE_AGE = 86400  # 1 day
-SESSION_COOKIE_HTTPONLY = DEBUG
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
