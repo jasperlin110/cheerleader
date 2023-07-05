@@ -57,6 +57,28 @@
   padding-top: 10px;
 }
 
+.thinking-line::after {
+  display: inline-block;
+  animation: ellipsis steps(1,end) 1s infinite;
+  content: '';
+}
+
+@keyframes ellipsis {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+@-webkit-keyframes ellipsis {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
 .message-prefix {
   margin-top: 0;
   margin-bottom: 5px;

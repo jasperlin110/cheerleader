@@ -106,21 +106,20 @@ function App() {
                 {
                     isThinking ?
                         <div className="thinking-line">
-                            Cheerleader is thinking...
+                            Cheerleader is thinking
                         </div>
                         :
-                        null
+                        <div className="input-line">
+                            <label className="message-prefix" htmlFor="user-input">You:</label>
+                            <input
+                                className="user-input"
+                                id="user-input"
+                                ref={userMessageRef}
+                                type="text"
+                                onKeyDown={handleKeyDown}
+                            />
+                        </div>
                 }
-                <div className="input-line">
-                    <label className="message-prefix" htmlFor="user-input">You:</label>
-                    <input
-                        className="user-input"
-                        id="user-input"
-                        ref={userMessageRef}
-                        type="text"
-                        onKeyDown={handleKeyDown}
-                    />
-                </div>
             </div>
             <div className="disclaimer">
                 <p>
