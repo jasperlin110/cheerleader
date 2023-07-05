@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-ooxzabinxlthc$8xjwu
 DEBUG = os.getenv('ENV', 'dev') == 'dev'
 
 ALLOWED_HOSTS = [
-    'cheerleader-ui.onrender.com',
+    'cheerleader-api.onrender.com',
     '.hirejasperlin.com',
 ]
 if DEBUG:
