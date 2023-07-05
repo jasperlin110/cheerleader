@@ -3,16 +3,16 @@ from string import Template
 from typing import Optional, List
 
 from django.conf import settings
-from langchain import OpenAI, LLMChain, PromptTemplate
-from langchain.llms import BaseLLM
-from langchain.memory import ConversationSummaryBufferMemory, ChatMessageHistory
+from langchain import LLMChain, PromptTemplate
+from langchain.llms import BaseLLM, PromptLayerOpenAI
+from langchain.memory import ChatMessageHistory, ConversationBufferMemory
 from langchain.schema import BaseMessage
 
 
-def construct_memory(llm: BaseLLM, messages: List[BaseMessage] = None) -> ConversationSummaryBufferMemory:
+def construct_memory(llm: BaseLLM, messages: List[BaseMessage] = None) -> ConversationBufferMemory:
     if messages is not None:
         chat_memory = ChatMessageHistory(messages=messages)
-        return ConversationSummaryBufferMemory(
+        return ConversationBufferMemory(
             llm=llm,
             input_key="user_message",
             ai_prefix="Cheerleader",
@@ -20,7 +20,7 @@ def construct_memory(llm: BaseLLM, messages: List[BaseMessage] = None) -> Conver
             chat_memory=chat_memory
         )
     else:
-        return ConversationSummaryBufferMemory(
+        return ConversationBufferMemory(
             llm=llm,
             input_key="user_message",
             ai_prefix="Cheerleader",
@@ -42,7 +42,7 @@ def generate_bot(messages: Optional[List[BaseMessage]] = None) -> LLMChain:
         ],
         template=template_string
     )
-    llm = OpenAI(temperature=0.4)
+    llm = PromptLayerOpenAI(temperature=0.4)
     memory = construct_memory(llm, messages)
     return LLMChain(
         llm=llm,
