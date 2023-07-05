@@ -26,6 +26,7 @@ DEBUG = os.getenv('ENV', 'dev') == 'dev'
 
 ALLOWED_HOSTS = [
     'cheerleader-api.onrender.com',
+    'api.hirejasperlin.com',
 ]
 if DEBUG:
     ALLOWED_HOSTS.extend([
@@ -57,6 +58,7 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://cheerleader-ui.onrender.com',
+    'https://hirejasperlin.com',
 ]
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
@@ -125,6 +127,7 @@ USE_TZ = True
 
 # Sessions
 SESSION_COOKIE_AGE = 86400  # 1 day
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

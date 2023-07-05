@@ -16,9 +16,6 @@ Including another URLconf
 """
 from django.urls import path, include
 
-from cheerleader import views
-
 urlpatterns = [
     path('chat/', include('chat.urls')),
-    path('csrf/', views.csrf)
 ]
