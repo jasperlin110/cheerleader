@@ -4,7 +4,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 
-const BASE_URL = "https://api.hirejasperlin.com";
+const BASE_URL = "https://www.api.hirejasperlin.com";
 
 interface ChatMessage {
     role: string,
