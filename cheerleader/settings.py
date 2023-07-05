@@ -21,14 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-ooxzabinxlthc$8xjwu5#3b*dsfapg&8(g5e!i)xl&u=e-n&4)')
 
+ENV_IS_LOCAL = os.getenv('ENV', 'dev') == 'dev'
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('ENV', 'dev') == 'dev'
+DEBUG = ENV_IS_LOCAL
 
 ALLOWED_HOSTS = [
     'cheerleader-api.onrender.com',
     '.hirejasperlin.com',
 ]
-if DEBUG:
+if ENV_IS_LOCAL:
     ALLOWED_HOSTS.extend([
         'localhost',
         '127.0.0.1',
@@ -60,7 +62,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://www.cheerleader-ui.onrender.com',
     'https://www.hirejasperlin.com',
 ]
-if DEBUG:
+if ENV_IS_LOCAL:
     CORS_ALLOWED_ORIGINS.extend([
         'http://localhost:5173',
         'http://127.0.0.1:5173',
@@ -128,6 +130,7 @@ USE_TZ = True
 # Sessions
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = not ENV_IS_LOCAL
 SESSION_SAVE_EVERY_REQUEST = True
 
 # Static files (CSS, JavaScript, Images)
