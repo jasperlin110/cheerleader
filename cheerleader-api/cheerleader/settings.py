@@ -26,7 +26,7 @@ DEBUG = os.getenv('ENV', 'dev') == 'dev'
 
 ALLOWED_HOSTS = [
     'cheerleader-ui.onrender.com',
-    'hirejasperlin.com',
+    '.hirejasperlin.com',
 ]
 if DEBUG:
     ALLOWED_HOSTS.extend([
