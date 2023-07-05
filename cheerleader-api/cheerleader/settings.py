@@ -57,11 +57,21 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://www.cheerleader-ui.onrender.com',
-    'https://www.hirejasperlin.com',
+    'https://cheerleader-ui.onrender.com',
+    'https://hirejasperlin.com',
 ]
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ])
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://cheerleader-ui.onrender.com',
+    'https://hirejasperlin.com',
+]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
         'http://localhost:5173',
         'http://127.0.0.1:5173',
     ])
