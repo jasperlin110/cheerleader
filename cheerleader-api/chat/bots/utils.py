@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from django.conf import settings
 from langchain import LLMChain, PromptTemplate
-from langchain.llms import BaseLLM, PromptLayerOpenAI
+from langchain.llms import BaseLLM, PromptLayerOpenAIChat
 from langchain.memory import ChatMessageHistory, ConversationBufferMemory
 from langchain.schema import BaseMessage
 
@@ -42,7 +42,10 @@ def generate_bot(messages: Optional[List[BaseMessage]] = None) -> LLMChain:
         ],
         template=template_string
     )
-    llm = PromptLayerOpenAI(temperature=0.4)
+    llm = PromptLayerOpenAIChat(
+        model_name=settings.OPENAI_MODEL_NAME,
+        temperature=0.4
+    )
     memory = construct_memory(llm, messages)
     return LLMChain(
         llm=llm,
