@@ -60,8 +60,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://cheerleader-ui.onrender.com',
     'https://cheerleader-api.onrender.com',
-    'https://hirejasperlin.com',
-    'https://api.hirejasperlin.com',
+    'https://www.hirejasperlin.com',
+    'https://www.api.hirejasperlin.com',
 ]
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
@@ -70,9 +70,9 @@ if DEBUG:
     ])
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://cheerleader-ui.onrender.com',
-    'https://cheerleader-api.onrender.com',
-    'https://api.hirejasperlin.com',
+    'www.cheerleader-ui.onrender.com',
+    'www.cheerleader-api.onrender.com',
+    'www.api.hirejasperlin.com',
 ]
 if DEBUG:
     CSRF_TRUSTED_ORIGINS.extend([
