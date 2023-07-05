@@ -57,8 +57,8 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://cheerleader-ui.onrender.com',
-    'https://hirejasperlin.com',
+    'https://www.cheerleader-ui.onrender.com',
+    'https://www.hirejasperlin.com',
 ]
 if DEBUG:
     CORS_ALLOWED_ORIGINS.extend([
