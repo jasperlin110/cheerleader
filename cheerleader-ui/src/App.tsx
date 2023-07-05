@@ -2,8 +2,9 @@ import "./App.css"
 import {useCallback, useEffect, useRef, useState} from "react";
 import axios from "axios";
 
-// const BASE_URL = "https://cheerleader-api.onrender.com";
-const BASE_URL = "http://localhost:8000";
+axios.defaults.withCredentials = true;
+
+const BASE_URL = "https://cheerleader-api.onrender.com";
 
 interface ChatMessage {
     role: string,
