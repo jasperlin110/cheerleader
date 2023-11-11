@@ -90,6 +90,8 @@ function App() {
                 <div className="static-line">That's me- Cheerleader.</div>
                 <div className="static-line"></div>
                 <div className="static-line">You get 3 questions- what do you want to know about Jasper?</div>
+                <div className="static-line"></div>
+                <div className="static-line">This site is currently in hibernation mode and will take a bit of time to start up.</div>
                 <div className="input-line login-line">Logged in @ {loginTime}</div>
                 <div className="message-history">
                     {messageHistory.map((message, index) => (
