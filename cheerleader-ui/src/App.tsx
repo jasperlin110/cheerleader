@@ -1,10 +1,7 @@
 import "./App.css"
-import {useCallback, useEffect, useRef, useState} from "react";
-import axios from "axios";
+import {KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
 
-axios.defaults.withCredentials = true;
-
-const BASE_URL = "https://www.api.hirejasperlin.com";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
 interface ChatMessage {
     role: string,
@@ -14,9 +11,7 @@ interface ChatMessage {
 
 function App() {
     const [loginTime] = useState<string>(new Date().toTimeString());
-
-    const [isThinking, setIsThinking] = useState<boolean>(false);
-
+    const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
     const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
     const userMessageRef = useRef<HTMLInputElement>(null);
 
@@ -24,36 +19,80 @@ function App() {
         userMessageRef.current?.focus();
     });
 
-    useEffect(() => {
-        if (messageHistory.length === 0) {
-            return;
-        }
+    const handleKeyDown = useCallback(async (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key !== "Enter" || userMessageRef.current == null) return;
 
-        const lastMessage = messageHistory[messageHistory.length - 1];
-        setIsThinking(lastMessage.role === "user");
-    }, [messageHistory]);
+        const userMessage = userMessageRef.current.value;
+        userMessageRef.current.value = "";
 
-    const handleKeyDown = useCallback( async (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter" && userMessageRef.current != null) {
-            const userMessageObject: ChatMessage = {
-                role: "user",
-                time: new Date().toLocaleTimeString(),
-                message: userMessageRef.current.value,
-            };
-            setMessageHistory(previousMessageHistory => [...previousMessageHistory, userMessageObject]);
-            userMessageRef.current.value = "";
+        setMessageHistory(prev => [...prev, {
+            role: "user",
+            time: new Date().toLocaleTimeString(),
+            message: userMessage,
+        }]);
+        setIsBotResponding(true);
 
-            const botMessageObject: ChatMessage = await axios.post(
-                `${BASE_URL}/chat/bot-response/`,
-                userMessageObject
-            ).then(response => {
-                const botMessageObject = response.data;
-                botMessageObject.time = new Date(botMessageObject.time).toLocaleTimeString();
-                return botMessageObject;
+        try {
+            const response = await fetch(`${BASE_URL}/chat/bot-response/`, {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({role: "user", time: new Date().toLocaleTimeString(), message: userMessage}),
             });
-            setMessageHistory(previousMessageHistory => [...previousMessageHistory, botMessageObject]);
+
+            const reader = response.body!.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+            let botMessageAdded = false;
+
+            while (true) {
+                const {done, value} = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, {stream: true});
+                const lines = buffer.split("\n");
+                buffer = lines.pop()!;
+
+                for (const line of lines) {
+                    if (!line.startsWith("data: ")) continue;
+                    const data = JSON.parse(line.slice(6));
+
+                    if (data.token) {
+                        if (!botMessageAdded) {
+                            botMessageAdded = true;
+                            setMessageHistory(prev => [...prev, {role: "bot", time: "", message: data.token}]);
+                        } else {
+                            setMessageHistory(prev => {
+                                const updated = [...prev];
+                                updated[updated.length - 1] = {
+                                    ...updated[updated.length - 1],
+                                    message: updated[updated.length - 1].message + data.token,
+                                };
+                                return updated;
+                            });
+                        }
+                    }
+
+                    if (data.done) {
+                        setMessageHistory(prev => {
+                            const updated = [...prev];
+                            updated[updated.length - 1] = {
+                                ...updated[updated.length - 1],
+                                time: new Date(data.time).toLocaleTimeString(),
+                            };
+                            return updated;
+                        });
+                        setIsBotResponding(false);
+                    }
+                }
+            }
+        } catch {
+            setIsBotResponding(false);
         }
     }, []);
+
+    const isThinking = isBotResponding &&
+        (messageHistory.length === 0 || messageHistory[messageHistory.length - 1].role === "user");
 
     return (
         <>
@@ -86,7 +125,7 @@ function App() {
                 <div className="static-line">Welcome! If you're here, you might be considering hiring Jasper Lin...</div>
                 <div className="static-line">...so he hired someone to convince you to do so.</div>
                 <div className="static-line"></div>
-                <div className="static-line">Just kidding- he built a GPT-powered chatbot to convince you.</div>
+                <div className="static-line">Just kidding- he built an AI-powered chatbot to convince you.</div>
                 <div className="static-line">That's me- Cheerleader.</div>
                 <div className="static-line"></div>
                 <div className="static-line">You get 3 questions- what do you want to know about Jasper?</div>
@@ -105,23 +144,22 @@ function App() {
                         </div>
                     ))}
                 </div>
-                {
-                    isThinking ?
-                        <div className="thinking-line">
-                            Cheerleader is thinking
-                        </div>
-                        :
-                        <div className="input-line">
-                            <label className="message-prefix" htmlFor="user-input">You:</label>
-                            <input
-                                className="user-input"
-                                id="user-input"
-                                ref={userMessageRef}
-                                type="text"
-                                onKeyDown={handleKeyDown}
-                            />
-                        </div>
-                }
+                {isThinking ? (
+                    <div className="thinking-line">
+                        Cheerleader is thinking
+                    </div>
+                ) : !isBotResponding ? (
+                    <div className="input-line">
+                        <label className="message-prefix" htmlFor="user-input">You:</label>
+                        <input
+                            className="user-input"
+                            id="user-input"
+                            ref={userMessageRef}
+                            type="text"
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                ) : null}
             </div>
             <div className="disclaimer">
                 <p>

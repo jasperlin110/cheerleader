@@ -1,15 +1,15 @@
 from datetime import datetime
 from string import Template
-from typing import List, Optional
+from typing import Iterator, List
 
 from django.conf import settings
 from langchain_anthropic import ChatAnthropic
-from langchain_core.messages import BaseMessage
+from langchain_core.messages import AIMessageChunk, BaseMessage, HumanMessage, SystemMessage
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 
 
-def create_langgraph_app(messages: Optional[List[BaseMessage]] = None):
+def _create_app():
     with open(settings.PROMPT_FILE_PATH, "r") as prompt_file:
         template = Template(prompt_file.read())
 
@@ -18,26 +18,28 @@ def create_langgraph_app(messages: Optional[List[BaseMessage]] = None):
     ).strip()
 
     workflow = StateGraph(state_schema=MessagesState)
-
-    model = ChatAnthropic(
-        model=settings.MODEL_NAME,
-        temperature=0.4,
-    )
+    model = ChatAnthropic(model=settings.MODEL_NAME, temperature=0.4)
 
     def call_model(state: MessagesState):
         messages = state["messages"]
-        if not messages or not any(msg.type == "system" for msg in messages):
-            from langchain_core.messages import SystemMessage
+        if not any(msg.type == "system" for msg in messages):
             messages = [SystemMessage(content=system_prompt)] + messages
-        response = model.invoke(messages)
-        return {"messages": response}
+        return {"messages": model.invoke(messages)}
 
     workflow.add_edge(START, "model")
     workflow.add_node("model", call_model)
-
-    memory = MemorySaver()
-    return workflow.compile(checkpointer=memory)
+    return workflow.compile(checkpointer=MemorySaver())
 
 
-def generate_bot(messages: Optional[List[BaseMessage]] = None):
-    return create_langgraph_app(messages)
+def stream_response(
+    prior_messages: List[BaseMessage], user_message: str, thread_id: str
+) -> Iterator[str]:
+    app = _create_app()
+    config = {"configurable": {"thread_id": thread_id}}
+    for chunk, _ in app.stream(
+        {"messages": prior_messages + [HumanMessage(content=user_message)]},
+        config=config,
+        stream_mode="messages",
+    ):
+        if isinstance(chunk, AIMessageChunk) and chunk.content:
+            yield str(chunk.content)
