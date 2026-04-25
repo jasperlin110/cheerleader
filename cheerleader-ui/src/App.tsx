@@ -122,15 +122,10 @@ function App() {
             </div>
 
             <div className="terminal">
-                <div className="static-line">Welcome! If you're here, you might be considering hiring Jasper Lin...</div>
-                <div className="static-line">...so he hired someone to convince you to do so.</div>
-                <div className="static-line"></div>
-                <div className="static-line">Just kidding- he built an AI-powered chatbot to convince you.</div>
-                <div className="static-line">That's me- Cheerleader.</div>
+                <div className="static-line">Welcome! If you're here, you might be considering hiring Jasper Lin.</div>
+                <div className="static-line">Meet Cheerleader- an AI-powered chatbot he built to answer your questions about him!</div>
                 <div className="static-line"></div>
                 <div className="static-line">You get 3 questions- what do you want to know about Jasper?</div>
-                <div className="static-line"></div>
-                <div className="static-line">This site is currently in hibernation mode and will take a bit of time to start up.</div>
                 <div className="input-line login-line">Logged in @ {loginTime}</div>
                 <div className="message-history">
                     {messageHistory.map((message, index) => (
