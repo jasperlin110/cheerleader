@@ -5,7 +5,7 @@ from enum import StrEnum
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from django.conf import settings
 
-from chat.bots.utils import generate_bot
+from chat.utils import generate_bot
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):

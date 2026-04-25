@@ -143,7 +143,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENAI_MODEL_NAME = os.getenv('OPENAI_MODEL_NAME')
+MODEL_NAME = os.getenv('MODEL_NAME', 'claude-haiku-4-5-20251001')
 PROMPT_FILE_PATH = BASE_DIR / os.getenv('PROMPT_FILE_PATH')
 MAX_USER_MESSAGE_COUNT = int(os.getenv('MAX_USER_MESSAGE_COUNT', 3))
 

@@ -4,8 +4,8 @@ django-cors-headers==4.1.0
 Django==4.2.2
 gunicorn==20.1.0
 jsonschema==4.17.3
-langchain==0.0.211
-openai==0.27.8
-promptlayer==0.1.90
+langchain-core>=0.3
+langchain-anthropic>=0.3
+langgraph>=0.2
+anthropic>=0.40
 requests==2.31.0
-tiktoken==0.4.0
