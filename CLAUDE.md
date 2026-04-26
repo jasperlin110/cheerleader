@@ -38,34 +38,39 @@ The entrypoint runs `migrate` then starts Gunicorn on port 8000.
 ## Architecture
 
 **Request flow:**
-1. React UI (`App.tsx`) sends `POST /chat/bot-response/` via Axios with session cookies
-2. Django view (`chat/views.py`) validates the JSON payload, checks/increments the session message count (limit: `MAX_USER_MESSAGE_COUNT`, default 3)
-3. `chat/utils.py` builds a LangGraph `StateGraph` with an in-memory checkpointer, invokes `gpt-4o-mini` with the system prompt from `chat/prompt.txt`
-4. The full AI response is stored in the Django session alongside conversation history
-5. Response JSON `{role, time, message}` is returned to the frontend
+1. React UI (`App.tsx`) sends `POST /chat/bot-response/` with session cookies using `fetch`
+2. Django view (`chat/views.py`) validates the JSON payload, checks/increments the session message count (limit: `MAX_USER_MESSAGE_COUNT`, default 3), and returns a `StreamingHttpResponse`
+3. `chat/utils.py` builds a LangGraph `StateGraph` with a `MemorySaver` checkpointer, invokes the configured Claude model with the system prompt from `chat/prompt.txt`, and yields tokens as they arrive
+4. The frontend reads the SSE stream and appends tokens to the message in real time
+5. After streaming completes, the full response and conversation history are saved to the Django session
 
-**State management:** Conversation history and message count live entirely in Django sessions (no database persistence for chat). Sessions expire after 24 hours.
+**SSE format:** Each event is `data: <json>\n\n`. Token events: `{"token": "..."}`. End event: `{"done": true, "time": "<iso timestamp>"}`.
+
+**State management:** Conversation history (`chat_messages`) and message count live entirely in Django sessions (no database persistence for chat). Sessions expire after 24 hours. `message_count` is incremented before the response starts streaming so the session cookie is set in the response headers.
 
 **System prompt:** `chat/prompt.txt` contains Jasper's full resume. The AI is instructed to answer only from that content. The prompt uses Python string template substitution to inject the current date.
 
 ## Key Configuration
 
 **Backend environment variables** (`.env` in `cheerleader-api/`):
-- `OPENAI_API_KEY`, `OPENAI_MODEL_NAME` (default: `gpt-4o-mini`)
-- `PROMPTLAYER_API_KEY` — prompt versioning/monitoring via PromptLayer
+- `ANTHROPIC_API_KEY` — required for Claude API access
+- `MODEL_NAME` (default: `claude-haiku-4-5-20251001`) — any `langchain-anthropic`-compatible model ID
 - `PROMPT_FILE_PATH` — path to system prompt file (default: `chat/prompt.txt`)
 - `MAX_USER_MESSAGE_COUNT` — session message limit (default: 3)
 - `EMAIL_ADDRESS`, `PHONE_NUMBER` — injected into prompt for contact info
 - `ENV` — set to `dev` for local development (affects CORS and cookie settings)
 
-**CORS & sessions:** In dev (`ENV=dev`), the backend allows `localhost:5173`. In production, it allows `*.hirejasperlin.com` and `cheerleader-api.onrender.com`. Session cookies use `SameSite=None; Secure` in production for cross-origin credential sharing.
+**Frontend environment variables** (`.env.local` in `cheerleader-ui/`):
+- `VITE_API_URL` — backend base URL (default: `http://localhost:8000`)
+- `VITE_LINKEDIN_URL`, `VITE_GITHUB_URL`, `VITE_RESUME_URL` — header links (defaults to Jasper's public profiles)
+
+**CORS & sessions:** In dev (`ENV=dev`), the backend allows `localhost:5173`. In production, it allows `*.hirejasperlin.com`. Session cookies use `SameSite=Lax`, which works when the frontend and backend share a registrable domain (`hirejasperlin.com`). The backend must be served under a `hirejasperlin.com` subdomain (e.g. `api.hirejasperlin.com`) — the raw Render URL is not in the allowlist.
 
 ## Unused Code
 
-- `chat/chat_consumer.py` and `chat/routing.py` — WebSocket consumer, not wired up
 - `cheerleader-ui/src/components/Chat.tsx` — alternate chat component with commented-out WebSocket implementation
 - `react-use-websocket` dependency is installed but unused
 
 ## Deployment
 
-Both services are deployed on Render. Frontend: `cheerleader-ui.onrender.com`. Backend: `cheerleader-api.onrender.com`. Custom domain: `hirejasperlin.com`.
+Both services are deployed on Render. Custom domain: `hirejasperlin.com`. The backend must be accessible via a `hirejasperlin.com` subdomain (e.g. `api.hirejasperlin.com`) for CORS and session cookies to work in production.
