@@ -27,7 +27,6 @@ ENV_IS_LOCAL = os.getenv('ENV', 'dev') == 'dev'
 DEBUG = ENV_IS_LOCAL
 
 ALLOWED_HOSTS = [
-    'cheerleader-api.onrender.com',
     '.hirejasperlin.com',
 ]
 if ENV_IS_LOCAL:
@@ -59,7 +58,6 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://www.cheerleader-ui.onrender.com',
     'https://www.hirejasperlin.com',
 ]
 if ENV_IS_LOCAL:
