@@ -2,6 +2,9 @@ import "./App.css"
 import {KeyboardEvent, useCallback, useEffect, useRef, useState} from "react";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.com/in/jasperlin110/";
+const GITHUB_URL = import.meta.env.VITE_GITHUB_URL ?? "https://github.com/jasperlin110/cheerleader";
+const RESUME_URL = import.meta.env.VITE_RESUME_URL ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
 
 interface ChatMessage {
     role: string,
@@ -98,27 +101,9 @@ function App() {
         <>
             <div className="header">
                 <h1 className="header-item header-title">Hire Jasper Lin</h1>
-                <a
-                    className="header-item social-media"
-                    href="https://www.linkedin.com/in/jasperlin110/"
-                    target="_blank"
-                >
-                    linkedin
-                </a>
-                <a
-                    className="header-item social-media"
-                    href="https://github.com/jasperlin110/cheerleader"
-                    target="_blank"
-                >
-                    github
-                </a>
-                <a
-                    className="header-item social-media"
-                    href="https://drive.google.com/file/d/1ZPBtYsnzcirl_qtCHNa-WRtsUA7g5HgQ/view?usp=sharing"
-                    target="_blank"
-                >
-                    resume
-                </a>
+                <a className="header-item social-media" href={LINKEDIN_URL} target="_blank">linkedin</a>
+                <a className="header-item social-media" href={GITHUB_URL} target="_blank">github</a>
+                <a className="header-item social-media" href={RESUME_URL} target="_blank">resume</a>
             </div>
 
             <div className="terminal">
