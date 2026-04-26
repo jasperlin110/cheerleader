@@ -6,6 +6,8 @@ const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.
 const GITHUB_URL = import.meta.env.VITE_GITHUB_URL ?? "https://github.com/jasperlin110/cheerleader";
 const RESUME_URL = import.meta.env.VITE_RESUME_URL ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
 
+const CHARS_PER_SECOND = 350;
+
 interface ChatMessage {
     role: string,
     time: string,
@@ -17,10 +19,63 @@ function App() {
     const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
     const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
     const userMessageRef = useRef<HTMLInputElement>(null);
+    const charQueueRef = useRef<string>("");
+    const rafRef = useRef<number | null>(null);
+    const pendingDoneTimeRef = useRef<string | null>(null);
+    const lastRafTimeRef = useRef<number>(0);
 
     useEffect(() => {
         userMessageRef.current?.focus();
     });
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+        };
+    }, []);
+
+    const drainQueue = useCallback((timestamp: number) => {
+        const elapsed = timestamp - lastRafTimeRef.current;
+        lastRafTimeRef.current = timestamp;
+
+        if (charQueueRef.current.length > 0) {
+            const count = Math.max(1, Math.round(elapsed * CHARS_PER_SECOND / 1000));
+            const chars = charQueueRef.current.slice(0, count);
+            charQueueRef.current = charQueueRef.current.slice(count);
+            setMessageHistory(prev => {
+                const updated = [...prev];
+                const last = updated[updated.length - 1];
+                if (last?.role === "bot" && last.time === "") {
+                    updated[updated.length - 1] = {...last, message: last.message + chars};
+                } else {
+                    updated.push({role: "bot", time: "", message: chars});
+                }
+                return updated;
+            });
+            rafRef.current = requestAnimationFrame(drainQueue);
+        } else if (pendingDoneTimeRef.current !== null) {
+            rafRef.current = null;
+            const time = pendingDoneTimeRef.current;
+            pendingDoneTimeRef.current = null;
+            setMessageHistory(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = {
+                    ...updated[updated.length - 1],
+                    time: new Date(time).toLocaleTimeString(),
+                };
+                return updated;
+            });
+            setIsBotResponding(false);
+        } else {
+            rafRef.current = requestAnimationFrame(drainQueue);
+        }
+    }, []);
+
+    const startDraining = useCallback(() => {
+        if (rafRef.current !== null) return;
+        lastRafTimeRef.current = performance.now();
+        rafRef.current = requestAnimationFrame(drainQueue);
+    }, [drainQueue]);
 
     const handleKeyDown = useCallback(async (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== "Enter" || userMessageRef.current == null) return;
@@ -34,6 +89,8 @@ function App() {
             message: userMessage,
         }]);
         setIsBotResponding(true);
+        charQueueRef.current = "";
+        pendingDoneTimeRef.current = null;
 
         try {
             const response = await fetch(`${BASE_URL}/chat/bot-response/`, {
@@ -43,56 +100,43 @@ function App() {
                 body: JSON.stringify({role: "user", time: new Date().toLocaleTimeString(), message: userMessage}),
             });
 
-            const reader = response.body!.getReader();
+            if (!response.body) throw new Error("No response body");
+            const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = "";
-            let botMessageAdded = false;
 
-            while (true) {
+            for (;;) {
                 const {done, value} = await reader.read();
                 if (done) break;
 
                 buffer += decoder.decode(value, {stream: true});
                 const lines = buffer.split("\n");
-                buffer = lines.pop()!;
+                buffer = lines.pop() ?? "";
 
                 for (const line of lines) {
                     if (!line.startsWith("data: ")) continue;
                     const data = JSON.parse(line.slice(6));
 
                     if (data.token) {
-                        if (!botMessageAdded) {
-                            botMessageAdded = true;
-                            setMessageHistory(prev => [...prev, {role: "bot", time: "", message: data.token}]);
-                        } else {
-                            setMessageHistory(prev => {
-                                const updated = [...prev];
-                                updated[updated.length - 1] = {
-                                    ...updated[updated.length - 1],
-                                    message: updated[updated.length - 1].message + data.token,
-                                };
-                                return updated;
-                            });
-                        }
+                        charQueueRef.current += data.token;
+                        startDraining();
                     }
 
                     if (data.done) {
-                        setMessageHistory(prev => {
-                            const updated = [...prev];
-                            updated[updated.length - 1] = {
-                                ...updated[updated.length - 1],
-                                time: new Date(data.time).toLocaleTimeString(),
-                            };
-                            return updated;
-                        });
-                        setIsBotResponding(false);
+                        pendingDoneTimeRef.current = data.time;
                     }
                 }
             }
         } catch {
+            charQueueRef.current = "";
+            pendingDoneTimeRef.current = null;
+            if (rafRef.current !== null) {
+                cancelAnimationFrame(rafRef.current);
+                rafRef.current = null;
+            }
             setIsBotResponding(false);
         }
-    }, []);
+    }, [startDraining]);
 
     const isThinking = isBotResponding &&
         (messageHistory.length === 0 || messageHistory[messageHistory.length - 1].role === "user");
