@@ -145,6 +145,7 @@ function App() {
                 <p>
                     Although efforts have been made to prevent it, Cheerleader may occasionally generate incorrect information.
                 </p>
+                <p>Last updated {__BUILD_DATE__}</p>
             </div>
         </>
     );
