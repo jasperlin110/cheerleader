@@ -7,7 +7,7 @@ const GITHUB_URL   = import.meta.env.VITE_GITHUB_URL   ?? "https://github.com/ja
 const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
 
 const CHARS_PER_SECOND = 350;
-const MAX_QUESTIONS = 10;
+const MAX_QUESTIONS = 3;
 
 const CHIPS = ["what's he up to now?", "what's he built?", "what does he like to do for fun?"];
 
