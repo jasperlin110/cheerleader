@@ -1,7 +1,7 @@
 import "./App.css";
 import { Fragment, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 
-const BASE_URL     = import.meta.env.VITE_API_URL     ?? "http://localhost:8000";
+const BASE_URL     = import.meta.env.VITE_API_URL      ?? "http://localhost:8000";
 const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.com/in/jasperlin110/";
 const GITHUB_URL   = import.meta.env.VITE_GITHUB_URL   ?? "https://github.com/jasperlin110/cheerleader";
 const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
@@ -9,7 +9,7 @@ const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.
 const CHARS_PER_SECOND = 350;
 const MAX_QUESTIONS = 10;
 
-const CHIPS = ["what're you looking for?", "what're you up to now?", "what's your tech stack?"];
+const CHIPS = ["what's he up to now?", "what's he built?", "what does he like to do for fun?"];
 
 const ASCII_HEADER = String.raw`     _    _    ____  ____  _____ ____    _     ___ _   _
     | |  / \  / ___||  _ \| ____|  _ \  | |   |_ _| \ | |
