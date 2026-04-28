@@ -12,8 +12,10 @@ interface ChatProps {
     messageHistory: ChatMessage[];
     isThinking: boolean;
     isBotResponding: boolean;
+    isCalendlyReady: boolean;
     remaining: number;
     inputValue: string;
+    calendlyURL: string;
     userMessageRef: RefObject<HTMLInputElement>;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -24,8 +26,10 @@ export default function Chat({
     messageHistory,
     isThinking,
     isBotResponding,
+    isCalendlyReady,
     remaining,
     inputValue,
+    calendlyURL,
     userMessageRef,
     handleInputChange,
     handleKeyDown,
@@ -110,7 +114,23 @@ export default function Chat({
                 </>
             ) : remaining === 0 && !isBotResponding ? (
                 <div className="done-line">
-                    [ <span className="boot-note">done</span> ] 0 questions remaining — thanks for stopping by
+                    [ <span className="boot-note">done</span> ]
+                    0 questions remaining — { 
+                        isCalendlyReady ? (
+                            <span>schedule a meeting with Jasper&nbsp;
+                                <a
+                                    href="#"
+                                    className="action-item"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        (window as { Calendly?: { initPopupWidget: (opts: object) => void } }).Calendly?.initPopupWidget({
+                                            url: calendlyURL,
+                                        });
+                                    }}
+                                >here</a>
+                            </span>
+                        ) : <span>thanks for stopping by!</span>
+                    }
                 </div>
             ) : null}
         </div>

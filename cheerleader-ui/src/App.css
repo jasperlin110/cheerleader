@@ -34,10 +34,21 @@ body {
 
 a {
   text-decoration: none;
+  color: var(--green);
+  transition: color 0.15s;
+}
+
+a:hover {
+  filter: brightness(1.2);
+  color: var(--green);
 }
 
 input:focus {
   outline: none;
+}
+
+.action-item {
+  animation: pulse-brightness 2s ease-in-out infinite;
 }
 
 /* ── Page wrapper ───────────────────────────────────────────────────────── */
@@ -119,16 +130,6 @@ input:focus {
   display: flex;
   gap: 18px;
   font-size: 13px;
-}
-
-.top-bar-links a {
-  color: var(--green);
-  transition: color 0.15s;
-}
-
-.top-bar-links a:hover {
-  filter: brightness(1.2);
-  color: var(--green);
 }
 
 /* ── Terminal panel ─────────────────────────────────────────────────────── */
@@ -361,7 +362,13 @@ input:focus {
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
 @keyframes v1blink {
-  50% { opacity: 0; }
+  50%  { opacity: 0; }
+}
+
+@keyframes pulse-brightness {
+  0%   { filter: brightness(1); }
+  50%  { filter: brightness(1.2); text-shadow: 0 0 20px var(--green-faint); }
+  100% { filter: brightness(1); }
 }
 
 @keyframes ellipsis {
@@ -424,10 +431,6 @@ input:focus {
 
   .status-bar {
     font-size: 9px;
-  }
-
-  .status-center {
-    display: none;
   }
 
   .disclaimer p {
