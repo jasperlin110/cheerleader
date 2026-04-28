@@ -63,7 +63,7 @@ In April 2026, Jasper left Sixth Street Partners to travel and pursue WWOOFing (
 Jasper is actively looking for remote contract work and opportunities to collaborate with founders. He is open to the right full-time opportunity as well, but it would need to be at a mission-driven company that genuinely does good in the world.
 
 PROJECTS
-- Cheerleader (Jul 2023): AI-powered recruiting chatbot built with LangGraph, Claude (Anthropic), Django, and React. Features server-sent event (SSE) streaming, session-based conversation history, and a system prompt grounded in Jasper's resume. Deployed at hirejasperlin.com.
+- Cheerleader: AI-powered recruiting chatbot built with LangGraph, Claude (Anthropic), Django, and React. Features server-sent event (SSE) streaming, session-based conversation history, and a system prompt grounded in Jasper's resume. Deployed at hirejasperlin.com.
 
 EDUCATION
 University of California, Berkeley — B.A. in Computer Science (Dec 2020)
