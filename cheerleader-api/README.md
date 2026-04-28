@@ -65,3 +65,17 @@ Each event is `data: <json>\n\n`:
 - `chat/prompt.txt` — Jasper's resume; used as the system prompt with Python string template substitution for the current date and contact info
 
 Conversation history and message count live in Django sessions (no database persistence for chat). Sessions expire after 24 hours.
+
+## Testing
+
+```bash
+bash test.sh         # or: make test-api from the repo root
+```
+
+The script sets sensible defaults for the three vars `settings.py` requires at import time (`PROMPT_FILE_PATH`, `EMAIL_ADDRESS`, `PHONE_NUMBER`). Override any of them as needed:
+
+```bash
+PROMPT_FILE_PATH=other/prompt.txt bash test.sh
+```
+
+`ANTHROPIC_API_KEY` is not required — the LangGraph app is mocked in all tests.

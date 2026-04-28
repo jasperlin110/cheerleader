@@ -30,6 +30,7 @@ npm run dev      # dev server with HMR at localhost:5173
 npm run build    # TypeScript check + production build to dist/
 npm run lint     # ESLint (warnings treated as errors)
 npm run preview  # serve the production build locally
+npm test         # run unit tests with Vitest (or: make test-ui from the repo root)
 ```
 
 ## Architecture
