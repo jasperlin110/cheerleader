@@ -6,6 +6,7 @@ const BASE_URL     = import.meta.env.VITE_API_URL      ?? "http://localhost:8000
 const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.com/in/jasperlin110/";
 const GITHUB_URL   = import.meta.env.VITE_GITHUB_URL   ?? "https://github.com/jasperlin110/cheerleader";
 const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
+const CALENDLY_URL = import.meta.env.VITE_CALENDLY_URL ?? "https://calendly.com/jasper-lin-110/30min";
 
 const CHARS_PER_SECOND = 350;
 const MAX_QUESTIONS = 3;
@@ -32,6 +33,8 @@ function formatLoginTime(): string {
 
 function App() {
     const [loginTime] = useState<string>(formatLoginTime);
+    // We only want to display the Calendly button if the script loads successfully to avoid displaying a broken button
+    const [isCalendlyReady, setIsCalendlyReady] = useState<boolean>(false);
     const [isBotResponding, setIsBotResponding] = useState<boolean>(false);
     const [messageHistory, setMessageHistory] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState<string>("");
@@ -41,6 +44,14 @@ function App() {
     const rafRef         = useRef<number | null>(null);
     const pendingDoneTimeRef = useRef<string | null>(null);
     const lastRafTimeRef     = useRef<number>(0);
+
+    useEffect(() => {
+        const script = document.createElement("script");
+        script.src = "https://assets.calendly.com/assets/external/widget.js";
+        script.type = "text/javascript";
+        script.onload = () => setIsCalendlyReady(true);
+        document.body.appendChild(script);
+    }, []);
 
     useEffect(() => {
         fetch(`${BASE_URL}/chat/history/`, { credentials: "include" })
@@ -205,7 +216,7 @@ function App() {
                     <nav className="top-bar-links">
                         <a href={LINKEDIN_URL} target="_blank" rel="noopener">linkedin ↗</a>
                         <a href={GITHUB_URL}   target="_blank" rel="noopener">github ↗</a>
-                        <a href={RESUME_URL}   target="_blank" rel="noopener" className="resume-link">resume ↗</a>
+                        <a href={RESUME_URL}   target="_blank" rel="noopener">resume ↗</a>
                     </nav>
                 </header>
 
@@ -238,8 +249,10 @@ function App() {
                         messageHistory={messageHistory}
                         isThinking={isThinking}
                         isBotResponding={isBotResponding}
+                        isCalendlyReady={isCalendlyReady}
                         remaining={remaining}
                         inputValue={inputValue}
+                        calendlyURL={CALENDLY_URL}
                         userMessageRef={userMessageRef}
                         handleInputChange={handleInputChange}
                         handleKeyDown={handleKeyDown}
@@ -253,7 +266,18 @@ function App() {
                         <span>
                             questions <CounterDots remaining={remaining} /> · {MAX_QUESTIONS - remaining}/{MAX_QUESTIONS} used
                         </span>
-                        <span className="status-center">⌃↑ history · ⌘K palette · ? help</span>
+                        {isCalendlyReady && (
+                            <a
+                                href="#"
+                                className="action-item"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    (window as { Calendly?: { initPopupWidget: (opts: object) => void } }).Calendly?.initPopupWidget({
+                                        url: CALENDLY_URL,
+                                    });
+                                }}
+                            >Schedule time with Jasper ↗</a>
+                        )}
                         <span>~/cheerleader · main</span>
                     </div>
                 </main>
