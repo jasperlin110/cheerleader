@@ -1,5 +1,6 @@
 import "./App.css";
-import { Fragment, KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import Chat, { ChatMessage } from "./components/Chat";
 
 const BASE_URL     = import.meta.env.VITE_API_URL      ?? "http://localhost:8000";
 const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.com/in/jasperlin110/";
@@ -9,19 +10,11 @@ const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.
 const CHARS_PER_SECOND = 350;
 const MAX_QUESTIONS = 3;
 
-const CHIPS = ["what's he up to now?", "what's he built?", "what does he like to do for fun?"];
-
 const ASCII_HEADER = String.raw`     _    _    ____  ____  _____ ____    _     ___ _   _
     | |  / \  / ___||  _ \| ____|  _ \  | |   |_ _| \ | |
  _  | | / _ \ \___ \| |_) |  _| | |_) | | |    | ||  \| |
 | |_| |/ ___ \ ___) |  __/| |___|  _ <  | |___ | || |\  |
  \___//_/   \_\____/|_|   |_____|_| \_\ |_____|___|_| \_|`;
-
-interface ChatMessage {
-    role: string;
-    time: string;
-    message: string;
-}
 
 function CounterDots({ remaining }: { remaining: number }) {
     const filled = "●".repeat(remaining);
@@ -241,88 +234,17 @@ function App() {
                     <hr className="sep" />
 
                     {/* ── Conversation ── */}
-                    <div className="convo">
-                        <div className="prompt-row">
-                            <span className="prompt-dollar">$</span>
-                            <span className="prompt-cmd">whoami</span>
-                        </div>
-                        <div className="whoami-resp">
-                            jasper lin — software engineer · b.a. computer science, uc berkeley (december 2020)
-                        </div>
-
-                        {messageHistory.map((msg, i) => {
-                            if (msg.role !== "user") return null;
-                            const botMsg = messageHistory[i + 1]?.role === "bot"
-                                ? messageHistory[i + 1]
-                                : null;
-                            return (
-                                <Fragment key={i}>
-                                    <div className="prompt-row">
-                                        <span className="prompt-dollar">$</span>
-                                        <span className="prompt-cmd">
-                                            cheerleader --ask &ldquo;{msg.message}&rdquo;
-                                        </span>
-                                    </div>
-                                    <div className="exchange">
-                                        <div>
-                                            <div className="msg-meta msg-meta-user">you{msg.time ? ` · ${msg.time}` : ""}</div>
-                                            <div className="msg-body-user">{msg.message}</div>
-                                        </div>
-                                        {botMsg && (
-                                            <div>
-                                                <div className="msg-meta msg-meta-bot">
-                                                    cheerleader{botMsg.time ? ` · ${botMsg.time}` : ""}
-                                                </div>
-                                                <div className="msg-body-bot">{botMsg.message}</div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </Fragment>
-                            );
-                        })}
-
-                        {isThinking ? (
-                            <div className="thinking-line">cheerleader is thinking</div>
-                        ) : remaining > 0 && !isBotResponding ? (
-                            <>
-                                <div
-                                    className="prompt-input-row"
-                                    onClick={() => userMessageRef.current?.focus()}
-                                >
-                                    <span className="prompt-dollar">$</span>
-                                    <span className="prompt-ask">ask&gt; </span>
-                                    <span className="prompt-user-text">{inputValue}</span>
-                                    <span className="cursor-blink" />
-                                    <input
-                                        className="prompt-input-hidden"
-                                        ref={userMessageRef}
-                                        type="text"
-                                        value={inputValue}
-                                        onChange={handleInputChange}
-                                        onKeyDown={handleKeyDown}
-                                        autoComplete="off"
-                                        autoCapitalize="off"
-                                        spellCheck={false}
-                                    />
-                                </div>
-                                <div className="chips">
-                                    {CHIPS.map(chip => (
-                                        <button
-                                            key={chip}
-                                            className="chip"
-                                            onClick={() => handleChipClick(chip)}
-                                        >
-                                            ⬡ {chip}
-                                        </button>
-                                    ))}
-                                </div>
-                            </>
-                        ) : remaining === 0 && !isBotResponding ? (
-                            <div className="done-line">
-                                [ <span className="boot-note">done</span> ] 0 questions remaining — thanks for stopping by
-                            </div>
-                        ) : null}
-                    </div>
+                    <Chat
+                        messageHistory={messageHistory}
+                        isThinking={isThinking}
+                        isBotResponding={isBotResponding}
+                        remaining={remaining}
+                        inputValue={inputValue}
+                        userMessageRef={userMessageRef}
+                        handleInputChange={handleInputChange}
+                        handleKeyDown={handleKeyDown}
+                        handleChipClick={handleChipClick}
+                    />
 
                     <div className="spacer" />
 
