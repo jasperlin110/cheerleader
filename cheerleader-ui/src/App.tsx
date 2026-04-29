@@ -5,8 +5,8 @@ import Chat, { ChatMessage } from "./components/Chat";
 const BASE_URL     = import.meta.env.VITE_API_URL      ?? "http://localhost:8000";
 const LINKEDIN_URL = import.meta.env.VITE_LINKEDIN_URL ?? "https://www.linkedin.com/in/jasperlin110/";
 const GITHUB_URL   = import.meta.env.VITE_GITHUB_URL   ?? "https://github.com/jasperlin110/cheerleader";
-const RESUME_URL   = import.meta.env.VITE_RESUME_URL   ?? "https://drive.google.com/file/d/1ptXrV8il4yFkWTXGcKfMJKBhIjI_eNFn/view?usp=sharing";
 const CALENDLY_URL = import.meta.env.VITE_CALENDLY_URL ?? "https://calendly.com/jasper-lin-110/30min";
+const RESUME_URL   = import.meta.env.VITE_RESUME_URL;
 
 const CHARS_PER_SECOND = 350;
 const MAX_QUESTIONS = 3;
@@ -216,7 +216,7 @@ function App() {
                     <nav className="top-bar-links">
                         <a href={LINKEDIN_URL} target="_blank" rel="noopener">linkedin ↗</a>
                         <a href={GITHUB_URL}   target="_blank" rel="noopener">github ↗</a>
-                        <a href={RESUME_URL}   target="_blank" rel="noopener">resume ↗</a>
+                        {RESUME_URL && <a href={RESUME_URL}   target="_blank" rel="noopener">resume ↗</a>}
                     </nav>
                 </header>
 
