@@ -1,4 +1,4 @@
-name: Daily chat dump
+name: Send Chat Dump
 
 on:
   schedule:
