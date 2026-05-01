@@ -54,6 +54,22 @@ function App() {
     }, []);
 
     useEffect(() => {
+        const handleMessage = (e: MessageEvent) => {
+            if (e.data?.event === "calendly.event_scheduled") {
+                const inviteeUri = e.data.payload?.invitee?.uri;
+                fetch(`${BASE_URL}/meeting/`, {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ invitee_uri: inviteeUri }),
+                });
+            }
+        };
+        window.addEventListener("message", handleMessage);
+        return () => window.removeEventListener("message", handleMessage);
+    }, []);
+
+    useEffect(() => {
         fetch(`${BASE_URL}/chat/history/`, { credentials: "include" })
             .then(r => r.ok ? r.json() : null)
             .then(data => {

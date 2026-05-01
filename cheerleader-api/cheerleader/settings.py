@@ -38,6 +38,7 @@ if ENV_IS_LOCAL:
 # Application definition
 INSTALLED_APPS = [
     'chat',
+    'meeting',
     'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -142,8 +143,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MODEL_NAME = os.getenv('MODEL_NAME', 'claude-haiku-4-5-20251001')
-PROMPT_FILE_PATH = BASE_DIR / os.getenv('PROMPT_FILE_PATH')
+PROMPT_FILE_PATH = BASE_DIR / os.getenv('PROMPT_FILE_PATH', '')
 MAX_USER_MESSAGE_COUNT = int(os.getenv('MAX_USER_MESSAGE_COUNT', 3))
 
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 PHONE_NUMBER = os.getenv('PHONE_NUMBER')
+ADMIN_SECRET_KEY = os.getenv('ADMIN_SECRET_KEY')
+CALENDLY_API_KEY = os.getenv('CALENDLY_API_KEY')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.me.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
