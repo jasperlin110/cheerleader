@@ -13,4 +13,4 @@ jobs:
         run: |
           curl -f -X POST \
             -H "x-api-key: ${{ secrets.ADMIN_SECRET_KEY }}" \
-            "${{ secrets.RENDER_BACKEND_URL }}/chat/dump/"
+            "${{ secrets.BACKEND_URL }}/chat/dump/"
