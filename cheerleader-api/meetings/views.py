@@ -6,7 +6,8 @@ from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_POST
 
-from chat.models import ChatSession, User
+from chat.models import ChatSession
+from users.models import User
 
 
 @require_POST
