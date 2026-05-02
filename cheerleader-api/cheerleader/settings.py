@@ -37,8 +37,9 @@ if ENV_IS_LOCAL:
 
 # Application definition
 INSTALLED_APPS = [
+    'users',
     'chat',
-    'meeting',
+    'meetings',
     'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
