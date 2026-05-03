@@ -134,7 +134,7 @@ def send_chat_dump(request: HttpRequest) -> JsonResponse:
     else:
         lines = []
         for i, s in enumerate(recent, 1):
-            lines.append(f"Session {i} (key: {s.session_key[:8]}...)\n" + "-" * 40)
+            lines.append(f"Session {i} (key: {s.session_key})\n" + "-" * 60)
             for msg in messages_from_dict(s.messages):
                 role = "User" if isinstance(msg, HumanMessage) else "Cheerleader"
                 lines.append(f"{role}: {msg.content}")
