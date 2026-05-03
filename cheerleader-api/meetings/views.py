@@ -53,7 +53,7 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
                 email=resource["email"],
                 defaults={
                     "name": resource.get("name", ""),
-                    "phone_number": [qa["answer"] for qa in resource["questions_and_answers"] if qa["position"] == 0].pop(),
+                    "phone_number": [qa["answer"] for qa in resource["questions_and_answers"] if qa["position"] == 1].pop(),
                     "timezone": resource.get("timezone", ""),
                 },
             )
