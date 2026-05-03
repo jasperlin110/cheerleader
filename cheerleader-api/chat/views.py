@@ -1,7 +1,6 @@
 import json
 import uuid
 from datetime import datetime, timedelta, timezone
-from functools import wraps
 from json import JSONDecodeError
 
 from django.conf import settings
@@ -116,7 +115,6 @@ def post_bot_response(request: HttpRequest) -> HttpResponse:
     response["Cache-Control"] = "no-cache"
     response["X-Accel-Buffering"] = "no"
     return response
-
 
 
 @require_POST
