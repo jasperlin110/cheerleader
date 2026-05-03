@@ -35,10 +35,16 @@ def _sse(data: dict) -> str:
 
 @require_GET
 def get_history(request: HttpRequest) -> HttpResponse:
-    try:
-        raw = ChatSession.objects.get(session_key=request.session.session_key).messages
-    except ChatSession.DoesNotExist:
-        raw = []
+    if not request.session.session_key:
+        request.session.create()
+    ip = (request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+          or request.META.get("REMOTE_ADDR"))
+    # By using get_or_create, we effectively track every site visit
+    chat_session, _ = ChatSession.objects.get_or_create(
+        session_key=request.session.session_key,
+        defaults={"ip_address": ip or None},
+    )
+    raw = chat_session.messages
     messages_lc = messages_from_dict(raw)
     result = []
     for msg in messages_lc:
