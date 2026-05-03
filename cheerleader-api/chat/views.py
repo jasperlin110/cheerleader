@@ -141,7 +141,7 @@ def send_chat_dump(request: HttpRequest) -> JsonResponse:
             lines.append(f"IP: {s.ip_address or 'unknown'}")
             lines.append(f"Meeting booked: {'yes' if s.meeting_scheduled else 'no'}")
             if s.user:
-                lines.append(f"User: {s.user.name} <{s.user.email}>")
+                lines.append(f"User: {s.user.name} <{s.user.email}>" + (f" <{s.user.phone_number}>" if s.user.phone_number else ""))
             lines.append("")
         body = "\n".join(lines)
 
