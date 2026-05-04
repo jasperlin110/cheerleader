@@ -1,5 +1,7 @@
 import { Fragment, KeyboardEvent, RefObject } from "react";
 
+const MAX_USER_MESSAGE_CHAR_LENGTH = import.meta.env.VITE_MAX_USER_MESSAGE_CHAR_LENGTH ?? 800;
+
 const CHIPS = ["what's he up to now?", "what's he built?", "what does he like to do for fun?"];
 
 export interface ChatMessage {
@@ -86,8 +88,10 @@ export default function Chat({
                     >
                         <span className="prompt-dollar">$</span>
                         <span className="prompt-ask">ask&gt; </span>
-                        <span className="prompt-user-text">{inputValue}</span>
-                        <span className="cursor-blink" />
+                        <span className="prompt-text-wrap">
+                            <span className="prompt-user-text">{inputValue}</span>
+                            <span className="cursor-blink" />
+                        </span>
                         <input
                             className="prompt-input-hidden"
                             ref={userMessageRef}
@@ -98,6 +102,7 @@ export default function Chat({
                             autoComplete="off"
                             autoCapitalize="off"
                             spellCheck={false}
+                            maxLength={MAX_USER_MESSAGE_CHAR_LENGTH}
                         />
                     </div>
                     <div className="chips">

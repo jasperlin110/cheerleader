@@ -8,6 +8,10 @@ const GITHUB_URL   = import.meta.env.VITE_GITHUB_URL   ?? "https://github.com/ja
 const CALENDLY_URL = import.meta.env.VITE_CALENDLY_URL ?? "https://calendly.com/jasper-lin-110/30min";
 const RESUME_URL   = import.meta.env.VITE_RESUME_URL;
 
+function getCsrfToken(): string {
+    return document.cookie.split("; ").find(r => r.startsWith("csrftoken="))?.split("=")[1] ?? "";
+}
+
 const CHARS_PER_SECOND = 350;
 const MAX_QUESTIONS = 3;
 
@@ -158,7 +162,7 @@ function App() {
             const response = await fetch(`${BASE_URL}/chat/bot-response/`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "X-CSRFToken": getCsrfToken() },
                 body: JSON.stringify({ role: "user", time: new Date().toLocaleTimeString(), message: userMessage }),
             });
 

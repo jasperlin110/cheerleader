@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, JsonResponse, StreamingHttpResponse
 from django.utils import timezone as django_timezone
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
@@ -22,7 +23,7 @@ REQUEST_BODY_SCHEMA = {
     "properties": {
         "role": {"type": "string", "const": "user"},
         "time": {"type": "string"},
-        "message": {"type": "string"},
+        "message": {"type": "string", "maxLength": settings.MAX_USER_MESSAGE_CHAR_LENGTH},
     },
     "required": ["role", "time", "message"],
     "additionalProperties": False,
@@ -33,6 +34,7 @@ def _sse(data: dict) -> str:
     return f"data: {json.dumps(data)}\n\n"
 
 
+@ensure_csrf_cookie
 @require_GET
 def get_history(request: HttpRequest) -> HttpResponse:
     if not request.session.session_key:
@@ -68,8 +70,8 @@ def post_bot_response(request: HttpRequest) -> HttpResponse:
     try:
         request_body = json.loads(request.body)
         validate(request_body, REQUEST_BODY_SCHEMA)
-    except (JSONDecodeError, ValidationError) as e:
-        return HttpResponseBadRequest(e)
+    except (JSONDecodeError, ValidationError):
+        return HttpResponseBadRequest("invalid request")
 
     user_message = request_body["message"]
     user_time = datetime.now(timezone.utc).isoformat()
