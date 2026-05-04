@@ -19,9 +19,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-ooxzabinxlthc$8xjwu5#3b*dsfapg&8(g5e!i)xl&u=e-n&4)')
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
-ENV_IS_LOCAL = os.getenv('ENV', 'dev') == 'dev'
+ENV_IS_LOCAL = os.environ['ENV'] == 'dev'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = ENV_IS_LOCAL
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -60,8 +61,15 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://www.hirejasperlin.com',
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.hirejasperlin.com',
+]
 if ENV_IS_LOCAL:
     CORS_ALLOWED_ORIGINS.extend([
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ])
+    CSRF_TRUSTED_ORIGINS.extend([
         'http://localhost:5173',
         'http://127.0.0.1:5173',
     ])
@@ -125,6 +133,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Production security headers
+if not ENV_IS_LOCAL:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
 # Sessions
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_COOKIE_SAMESITE = 'Lax'
@@ -143,6 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MODEL_NAME = os.getenv('MODEL_NAME', 'claude-haiku-4-5-20251001')
 PROMPT_FILE_PATH = BASE_DIR / os.getenv('PROMPT_FILE_PATH')
+MAX_USER_MESSAGE_CHAR_LENGTH = int(os.getenv('MAX_USER_MESSAGE_CHAR_LENGTH', 800))
 MAX_USER_MESSAGE_COUNT = int(os.getenv('MAX_USER_MESSAGE_COUNT', 3))
 
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')

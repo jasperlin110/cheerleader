@@ -258,6 +258,12 @@ input:focus {
   flex-shrink: 0;
 }
 
+.prompt-text-wrap {
+  flex: 1;
+  min-width: 0;
+  word-break: break-all;
+}
+
 .prompt-user-text {
   color: var(--user);
 }
