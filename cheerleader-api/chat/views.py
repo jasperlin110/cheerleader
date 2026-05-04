@@ -5,6 +5,7 @@ from json import JSONDecodeError
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, StreamingHttpResponse
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
@@ -28,6 +29,7 @@ def _sse(data: dict) -> str:
     return f"data: {json.dumps(data)}\n\n"
 
 
+@ensure_csrf_cookie
 @require_GET
 def history(request: HttpRequest) -> HttpResponse:
     from django.http import JsonResponse
@@ -55,8 +57,8 @@ def bot_response(request: HttpRequest) -> HttpResponse:
     try:
         request_body = json.loads(request.body)
         validate(request_body, REQUEST_BODY_SCHEMA)
-    except (JSONDecodeError, ValidationError) as e:
-        return HttpResponseBadRequest(e)
+    except (JSONDecodeError, ValidationError):
+        return HttpResponseBadRequest("invalid request")
 
     user_message = request_body["message"]
     user_time = datetime.now(timezone.utc).isoformat()

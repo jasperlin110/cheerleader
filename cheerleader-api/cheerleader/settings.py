@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -60,8 +61,15 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'https://www.hirejasperlin.com',
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://www.hirejasperlin.com',
+]
 if ENV_IS_LOCAL:
     CORS_ALLOWED_ORIGINS.extend([
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ])
+    CSRF_TRUSTED_ORIGINS.extend([
         'http://localhost:5173',
         'http://127.0.0.1:5173',
     ])
