@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlparse
 
 import requests
 
@@ -17,6 +18,9 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
 
     user = None
     if invitee_uri and settings.CALENDLY_API_KEY:
+        parsed = urlparse(invitee_uri)
+        if parsed.scheme != "https" or parsed.netloc != "api.calendly.com":
+            return JsonResponse({"error": "invalid invitee_uri"}, status=400)
         resp = requests.get(
             invitee_uri,
             headers={"Authorization": f"Bearer {settings.CALENDLY_API_KEY}"},

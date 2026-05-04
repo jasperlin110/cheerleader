@@ -55,6 +55,7 @@ function App() {
 
     useEffect(() => {
         const handleMessage = (e: MessageEvent) => {
+            if (e.origin !== "https://calendly.com") return;
             if (e.data?.event === "calendly.event_scheduled") {
                 const inviteeUri = e.data.payload?.invitee?.uri;
                 fetch(`${BASE_URL}/meeting/`, {
