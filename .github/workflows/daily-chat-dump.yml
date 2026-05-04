@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: '0 8 * * *'  # midnight PT (UTC-8)
   workflow_dispatch:       # allow manual trigger for testing
-  push:
-    branches:
-      - jasper/add-daily-digest 
 
 jobs:
   dump:
