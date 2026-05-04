@@ -1,5 +1,5 @@
 import json
-from urllib.parse import urlparse
+import re
 
 import requests
 
@@ -11,6 +11,16 @@ from chat.models import ChatSession
 from users.models import User
 
 
+def _build_invitee_re() -> re.Pattern:
+    base = re.escape(settings.CALENDLY_API_BASE_URL.rstrip("/"))
+    return re.compile(
+        rf"^{base}(?:/api/v2)?/scheduled_events/([A-Za-z0-9_-]+)/invitees/([A-Za-z0-9_-]+)$"
+    )
+
+
+_INVITEE_RE = _build_invitee_re()
+
+
 @require_POST
 def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
     body = json.loads(request.body) if request.body else {}
@@ -18,11 +28,12 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
 
     user = None
     if invitee_uri and settings.CALENDLY_API_KEY:
-        parsed = urlparse(invitee_uri)
-        if parsed.scheme != "https" or parsed.netloc != "api.calendly.com":
+        m = _INVITEE_RE.match(invitee_uri)
+        if not m:
             return JsonResponse({"error": "invalid invitee_uri"}, status=400)
+        safe_uri = f"{settings.CALENDLY_API_BASE_URL.rstrip('/')}/scheduled_events/{m.group(1)}/invitees/{m.group(2)}"
         resp = requests.get(
-            invitee_uri,
+            safe_uri,
             headers={"Authorization": f"Bearer {settings.CALENDLY_API_KEY}"},
             timeout=5,
         )

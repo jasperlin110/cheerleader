@@ -167,6 +167,7 @@ EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 PHONE_NUMBER = os.getenv('PHONE_NUMBER')
 ADMIN_SECRET_KEY = os.getenv('ADMIN_SECRET_KEY')
 CALENDLY_API_KEY = os.getenv('CALENDLY_API_KEY')
+CALENDLY_API_BASE_URL = os.getenv('CALENDLY_API_BASE_URL', 'https://api.calendly.com')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.me.com'
