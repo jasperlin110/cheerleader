@@ -18,7 +18,7 @@ REQUEST_BODY_SCHEMA = {
     "properties": {
         "role": {"type": "string", "const": "user"},
         "time": {"type": "string"},
-        "message": {"type": "string"},
+        "message": {"type": "string", "maxLength": settings.MAX_USER_MESSAGE_CHAR_LENGTH},
     },
     "required": ["role", "time", "message"],
     "additionalProperties": False,
