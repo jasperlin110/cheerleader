@@ -65,7 +65,7 @@ function App() {
                 fetch(`${BASE_URL}/meeting/`, {
                     method: "POST",
                     credentials: "include",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", "X-CSRFToken": getCsrfToken() },
                     body: JSON.stringify({ invitee_uri: inviteeUri }),
                 });
             }
