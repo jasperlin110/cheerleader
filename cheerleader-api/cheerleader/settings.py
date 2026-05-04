@@ -133,6 +133,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Production security headers
+if not ENV_IS_LOCAL:
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
 # Sessions
 SESSION_COOKIE_AGE = 86400  # 1 day
 SESSION_COOKIE_SAMESITE = 'Lax'
