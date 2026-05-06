@@ -1,7 +1,14 @@
 from functools import wraps
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
+
+
+def get_client_ip(request: HttpRequest) -> str | None:
+    xff = request.headers.get("X-Forwarded-For")
+    if xff:
+        return xff.split(",")[0].strip() or None
+    return request.META.get("REMOTE_ADDR") or None
 
 
 def admin_only(view_func):

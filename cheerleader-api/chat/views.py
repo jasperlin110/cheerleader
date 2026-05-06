@@ -15,7 +15,7 @@ from langchain_core.messages import AIMessage, HumanMessage, messages_from_dict,
 
 from chat import utils
 from chat.models import ChatSession
-from cheerleader.utils import admin_only
+from cheerleader.utils import admin_only, get_client_ip
 
 
 REQUEST_BODY_SCHEMA = {
@@ -39,8 +39,7 @@ def _sse(data: dict) -> str:
 def get_history(request: HttpRequest) -> HttpResponse:
     if not request.session.session_key:
         request.session.create()
-    ip = (request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-          or request.META.get("REMOTE_ADDR"))
+    ip = get_client_ip(request)
     # By using get_or_create, we effectively track every site visit
     chat_session, _ = ChatSession.objects.get_or_create(
         session_key=request.session.session_key,
@@ -110,8 +109,7 @@ def post_bot_response(request: HttpRequest) -> HttpResponse:
                     AIMessage(content=full, additional_kwargs={"time": bot_time}),
                 ]
             )
-            ip = (request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
-                  or request.META.get("REMOTE_ADDR"))
+            ip = get_client_ip(request)
             ChatSession.objects.update_or_create(
                 session_key=request.session.session_key,
                 defaults={"messages": updated_messages, "ip_address": ip or None},
