@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 
 import requests
@@ -9,6 +10,9 @@ from django.views.decorators.http import require_POST
 
 from chat.models import ChatSession
 from users.models import User
+
+
+logger = logging.getLogger(__name__)
 
 
 def _build_invitee_re() -> re.Pattern:
@@ -64,14 +68,22 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
             #     ]
             #   }
             # }
-            user, _ = User.objects.update_or_create(
-                email=resource["email"],
-                defaults={
-                    "name": resource.get("name", ""),
-                    "phone_number": [qa["answer"] for qa in resource["questions_and_answers"] if qa["position"] == 1].pop(),
-                    "timezone": resource.get("timezone", ""),
-                },
-            )
+            email = resource.get("email")
+            if email:
+                phone_number = next(
+                    (qa["answer"] for qa in resource.get("questions_and_answers", []) if qa.get("position") == 1),
+                    "",
+                )
+                user, _ = User.objects.update_or_create(
+                    email=email,
+                    defaults={
+                        "name": resource.get("name", ""),
+                        "phone_number": phone_number,
+                        "timezone": resource.get("timezone", ""),
+                    },
+                )
+            else:
+                logger.error("Calendly invitee resource missing email: %s", resource)
 
     ChatSession.objects.filter(session_key=request.session.session_key).update(
         meeting_scheduled=True,
