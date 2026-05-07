@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, JsonResponse, StreamingHttpResponse
 from django.utils import timezone as django_timezone
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 from jsonschema.exceptions import ValidationError
 from jsonschema.validators import validate
@@ -123,6 +123,7 @@ def post_bot_response(request: HttpRequest) -> HttpResponse:
     return response
 
 
+@csrf_exempt
 @require_POST
 @admin_only
 def send_chat_dump(request: HttpRequest) -> JsonResponse:
