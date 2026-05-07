@@ -1,12 +1,15 @@
 import json
 import logging
 import re
+from json import JSONDecodeError
 
 import requests
 
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.http import require_POST
+from jsonschema.exceptions import ValidationError
+from jsonschema.validators import validate
 
 from chat.models import ChatSession
 from users.models import User
@@ -21,23 +24,33 @@ def _build_invitee_re() -> re.Pattern:
         rf"^{base}(?:/api/v2)?/scheduled_events/([A-Za-z0-9_-]+)/invitees/([A-Za-z0-9_-]+)$"
     )
 
-
 _INVITEE_RE = _build_invitee_re()
+
+REQUEST_BODY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "invitee_uri": {"type": "string", "pattern": _INVITEE_RE.pattern},
+    },
+    "required": ["invitee_uri"],
+    "additionalProperties": False,
+}
 
 
 @require_POST
 def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
-    body = json.loads(request.body) if request.body else {}
-    invitee_uri = body.get("invitee_uri")
+    try:
+        body = json.loads(request.body) if request.body else {}
+        validate(body, REQUEST_BODY_SCHEMA)
+    except (JSONDecodeError, ValidationError):
+        return JsonResponse({"error": "invalid request"}, status=400)
+    invitee_uri = body["invitee_uri"]
 
     user = None
-    if invitee_uri and settings.CALENDLY_API_KEY:
-        m = _INVITEE_RE.match(invitee_uri)
-        if not m:
-            return JsonResponse({"error": "invalid invitee_uri"}, status=400)
-        safe_uri = f"{settings.CALENDLY_API_BASE_URL.rstrip('/')}/scheduled_events/{m.group(1)}/invitees/{m.group(2)}"
+    if not settings.CALENDLY_API_KEY:
+        logger.error("Missing CALENDLY_API_KEY")
+    else:
         resp = requests.get(
-            safe_uri,
+            invitee_uri,
             headers={"Authorization": f"Bearer {settings.CALENDLY_API_KEY}"},
             timeout=5,
         )
@@ -69,7 +82,9 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
             #   }
             # }
             email = resource.get("email")
-            if email:
+            if not email:
+                logger.error("Calendly invitee resource missing email: %s", resource)
+            else:
                 phone_number = next(
                     (qa["answer"] for qa in resource.get("questions_and_answers", []) if qa.get("position") == 1),
                     "",
@@ -82,8 +97,6 @@ def handle_meeting_creation(request: HttpRequest) -> JsonResponse:
                         "timezone": resource.get("timezone", ""),
                     },
                 )
-            else:
-                logger.error("Calendly invitee resource missing email: %s", resource)
 
     ChatSession.objects.filter(session_key=request.session.session_key).update(
         meeting_scheduled=True,
