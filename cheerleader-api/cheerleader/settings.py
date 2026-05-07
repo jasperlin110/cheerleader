@@ -169,6 +169,33 @@ ADMIN_SECRET_KEY = os.getenv('ADMIN_SECRET_KEY')
 CALENDLY_API_KEY = os.getenv('CALENDLY_API_KEY')
 CALENDLY_API_BASE_URL = os.getenv('CALENDLY_API_BASE_URL', 'https://api.calendly.com')
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "chat": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.mail.me.com'
 EMAIL_PORT = 587
