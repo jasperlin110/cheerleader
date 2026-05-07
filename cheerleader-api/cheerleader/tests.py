@@ -24,6 +24,10 @@ class GetClientIpTests(TestCase):
         request = self.factory.get("/", HTTP_X_FORWARDED_FOR="  5.6.7.8  , 9.10.11.12")
         self.assertEqual(get_client_ip(request), "5.6.7.8")
 
+    def test_empty_first_xff_hop_falls_back_to_remote_addr(self):
+        request = self.factory.get("/", HTTP_X_FORWARDED_FOR=", 9.10.11.12", REMOTE_ADDR="1.2.3.4")
+        self.assertEqual(get_client_ip(request), "1.2.3.4")
+
 
 class AdminOnlyTests(TestCase):
     def setUp(self):
