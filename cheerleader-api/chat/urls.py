@@ -19,6 +19,7 @@ from django.urls import path
 from chat import views
 
 urlpatterns = [
-    path("history/", views.history),
-    path("bot-response/", views.bot_response),
+    path("history/", views.get_history),
+    path("bot-response/", views.post_bot_response),
+    path("dump/", views.send_chat_dump),
 ]

@@ -1,0 +1,16 @@
+name: Send Chat Dump
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # midnight PT (UTC-8)
+  workflow_dispatch:       # allow manual trigger for testing
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger dump endpoint
+        run: |
+          curl -f -X POST \
+            -H "x-api-key: ${{ secrets.ADMIN_SECRET_KEY }}" \
+            "${{ secrets.BACKEND_URL }}/chat/dump/"

@@ -25,4 +25,5 @@ def health(request):
 urlpatterns = [
     path('health/', health),
     path('chat/', include('chat.urls')),
+    path('meeting/', include('meetings.urls')),
 ]
