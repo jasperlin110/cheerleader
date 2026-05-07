@@ -6,4 +6,4 @@ python manage.py migrate
 
 # Start server
 echo "Starting server..."
-gunicorn --bind 0.0.0.0:8000 cheerleader.wsgi
+gunicorn --bind 0.0.0.0:8000 --access-logfile - cheerleader.wsgi
