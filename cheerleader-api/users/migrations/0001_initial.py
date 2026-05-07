@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="User",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False)),
                 ("name", models.CharField(max_length=100)),
                 ("email", models.EmailField(unique=True)),
                 ("phone_number", models.CharField(blank=True, max_length=50)),
